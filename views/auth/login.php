@@ -1,6 +1,5 @@
 <div class="contenedor login">
-    <h1 class="uptask">Uptask</h1>
-    <p class="tagline">Crea y adminstra tus proyecto</p>
+    <?php include_once __DIR__ . '/../templates/nombre-sitio.php'; ?>
 
     <div class="contenedor-sm">
         <p class="descripcion-pagina">Inicia Sesion</p>
