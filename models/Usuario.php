@@ -48,6 +48,25 @@ class Usuario extends ActiveRecord
         return self::$alertas;
     }
 
+    public function validarEmail(){
+        if (!$this->email) {
+            self::$alertas['error'][] = 'El Email es Obligatorio';
+        }
+        if (!filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
+            self::$alertas['error'][] = 'Email no valido';
+        }
+        return self::$alertas;
+    }
+
+    public function validarPassword(){
+        if (!$this->password) {
+            self::$alertas['error'][] = 'El Password es Obligatorio';
+        } elseif (strlen($this->password) < 6) {
+            self::$alertas['error'][] = 'El Password debe tener al menos 6 caracteres';
+        }
+        return self::$alertas;
+    }
+
     //Hashea el password
     public function hashPassword()
     {
