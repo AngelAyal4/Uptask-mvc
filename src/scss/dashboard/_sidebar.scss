@@ -1,0 +1,33 @@
+@use 'base/mixins' as m;
+@use 'base/variables' as v;
+
+.sidebar{
+    background-color: v.$indigo;
+    padding: 2rem;
+    h2{
+        color: v.$blanco;
+        margin: 0;
+        text-align: center;
+    }
+
+    .sidebar-nav{
+        margin-top: 5rem;
+
+        a{
+            color: v.$blanco;
+            margin-bottom: 1rem;
+            display: block;
+            padding: 1rem ;
+            //font-size: 2rem;
+            transition: background-color 0.3s ease;
+
+            &:hover,
+            &.activo{
+                background-color: darken(v.$indigo, 10%);
+                color: v.$blanco;
+                border-radius: 0.5rem;
+            }
+        }
+    }
+
+}

@@ -11,27 +11,38 @@ class LoginController {
 
         $alertas = [];
 
-        if($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $usuario = new Usuario($_POST);
             $alertas = $usuario->validarLogin();
-            if(empty($alertas)) {
-                // Verificar quel el usuario exista
+        
+            if (empty($alertas)) {
                 $usuario = Usuario::where('email', $usuario->email);
-                if(!$usuario || !$usuario->confirmado ) {
-                    Usuario::setAlerta('error', 'El Usuario No Existe o no esta confirmado');
+                
+                if (!$usuario || !$usuario->confirmado) {
+                    Usuario::setAlerta('error', 'El Usuario No Existe o no está confirmado');
                 } else {
-                    // El Usuario existe
-                    $passwordIngresado = trim($_POST['password']);
-                    $hashAlmacenado = trim($usuario->password);
-                    debuguear($usuario->password);
+                    $passwordIngresado = $_POST['password']; // ← sin trim
+                    $hashAlmacenado = $usuario->password;    // ← sin trim
+        
                     if (password_verify($passwordIngresado, $hashAlmacenado)) {
-                        echo 'Contraseña correcta';
+
+                        //debuguear('correcto' . ' - ' . $usuario->password . ' - ' . password_hash($passwordIngresado, PASSWORD_BCRYPT));
+                        session_start();    
+                        $_SESSION['id'] = $usuario->id;
+                        $_SESSION['nombre'] = $usuario->nombre;
+                        $_SESSION['email'] = $usuario->email;
+                        $_SESSION['login'] = true;
+        
+                        header('Location: /dashboard');
+                        exit;
                     } else {
-                        echo 'Contraseña incorrecta';
+                        //debuguear('incorrecto' . ' - ' . $usuario->password . ' - ' . password_hash($passwordIngresado, PASSWORD_BCRYPT));
+                        Usuario::setAlerta('error', 'Password Incorrecto');
                     }
                 }
             }
         }
+        
 
         $alertas = Usuario::getAlertas();
         // Render a la vista 
@@ -41,11 +52,11 @@ class LoginController {
         ]);
     }
 
-    /*public static function logout() {
+    public static function logout() {
         session_start();
         $_SESSION = [];
         header('Location: /');
-    }*/
+    }
 
     public static function crear(Router $router) {
         $alertas = [];
