@@ -26,9 +26,6 @@ class Proyecto extends ActiveRecord
         if (!$this->proyecto) {
             self::$alertas['error'][] = 'El nombre del proyecto es obligatorio';
         }
-        if (!$this->url) {
-            self::$alertas['error'][] = 'La URL del proyecto es obligatoria';
-        }
         return self::$alertas;
     }
         

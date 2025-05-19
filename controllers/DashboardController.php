@@ -22,12 +22,15 @@ class DashboardController {
             //debuguear('Submi');
             $proyecto = new Proyecto($_POST);
             $alertas = $proyecto->validarProyecto();
+            
             if (empty($alertas)) {
                 //Generar una URL unica
                 $hash = md5(uniqid());
                 $proyecto->url = $hash;
+                
                 //Almacenar el creador del proyecto
                 $proyecto->propietarioId = $_SESSION['id'];
+                debuguear($proyecto);
                 // Guardar el proyecto en la base de datos
                 $proyecto->guardar();
                 // Redireccionar al usuario
