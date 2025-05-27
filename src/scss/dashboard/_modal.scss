@@ -26,6 +26,10 @@
             border-radius: 0.5rem;
         }
 
+        input[type="text"]{
+            border: 1px solid v.$gris;
+        }
+
         legend{
             font-size: 2rem;
             text-align: center;
