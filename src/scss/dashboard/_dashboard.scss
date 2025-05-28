@@ -11,6 +11,7 @@
 
     .principal{
         flex: 1;
+        overflow: scroll; //permie scroller por el contenido que abarque el elemeno sin tocar el resto de la pantalla
     }
 
     .contenido{
