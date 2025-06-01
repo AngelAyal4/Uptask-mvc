@@ -61,6 +61,9 @@
             btnEstadoTarea.classList.add(estados[tarea.estado].toLowerCase());
             btnEstadoTarea.textContent = estados[tarea.estado];
             btnEstadoTarea.dataset.estadoTarea = tarea.estado;
+            btnEstadoTarea.ondblclick = function() {
+                cambiarEstadoTarea({...tarea});
+            }
 
             const btnEliminarTarea = document.createElement('BUTTON');
             btnEliminarTarea.classList.add('eliminar-tarea');
@@ -192,26 +195,54 @@
                 tareas = [...tareas, tareaObj];
 
                 mostrarTareas();
-                
-                /*document.querySelector('.formulario').reset();
-                const tarea = resultado.tarea;
-                const nuevoTarea = document.createElement('LI');
-                nuevoTarea.dataset.tareaId = tarea.id;
-                nuevoTarea.classList.add('tarea');
-                nuevoTarea.innerHTML = `
-                    <p>${tarea.nombre}</p>
-                    <div class="acciones">
-                        <button class="btn-completo">Completo</button>
-                        <button class="btn-eliminar">Eliminar</button>
-                    </div>
-                `;
-                const listaTareas = document.querySelector('#listado-tareas');
-                listaTareas.appendChild(nuevoTarea);*/
             }
 
         }catch(error){
             console.log(error);
         }
+    }
+
+    function cambiarEstadoTarea(tarea){
+        const nuevoEstado = tarea.estado === '1' ? '0' : '1';
+        tarea.estado = nuevoEstado;
+        actualizarTarea(tarea);
+    }
+
+    async function actualizarTarea(tarea){
+        const { estado, id, nombre, proyectoId } = tarea;
+
+        const datos = new FormData();
+        datos.append('id', id);
+        datos.append('nombre', nombre);
+        datos.append('estado', estado);
+        datos.append('proyectoId', obtenerProyecto());
+
+        try{
+            const url = 'http://localhost:3000/api/tarea/actualizar';
+            const respuesta = await fetch(
+                url, {
+                    method: 'POST',
+                    body: datos
+                });
+                const resultado = await respuesta.json();
+                if(resultado.respuesta.tipo === 'exito'){
+                    mostrarAlerta(
+                        resultado.respuesta.mensaje, 
+                        resultado.respuesta.tipo, 
+                        document.querySelector('.contenedor-nueva-tarea')
+                    );
+
+                    tareas = tareas.map(tareaActual => {
+                        if(tareaActual.id === id){
+                            tareaActual.estado = estado;
+                        }
+                        return tareaActual;
+                    });
+                    mostrarTareas();
+                }
+            }catch(error){
+                console.log(error);
+            }
     }
 
     function obtenerProyecto(){
