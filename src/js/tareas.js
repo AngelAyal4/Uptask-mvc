@@ -62,6 +62,7 @@
             btnEstadoTarea.textContent = estados[tarea.estado];
             btnEstadoTarea.dataset.estadoTarea = tarea.estado;
             btnEstadoTarea.ondblclick = function() {
+                
                 cambiarEstadoTarea({...tarea});
             }
 
@@ -69,6 +70,10 @@
             btnEliminarTarea.classList.add('eliminar-tarea');
             btnEliminarTarea.dataset.tareaId = tarea.id;
             btnEliminarTarea.textContent = 'Eliminar';
+            btnEliminarTarea.ondblclick = function() {
+                //console.log('Eliminando');
+                confirmarEliminarTarea(tarea);  // Corrección: pasar tarea directamente
+            }
 
             // Agregar elementos al contenedor de opciones
             opcionesDiv.appendChild(btnEstadoTarea);
@@ -243,6 +248,54 @@
             }catch(error){
                 console.log(error);
             }
+    }
+
+    function confirmarEliminarTarea(tarea){
+        Swal.fire({
+            title: "Eliminar Tarea?",
+            showCancelButton: true,
+            confirmButtonText: 'Si',
+            cancelButtonText: 'No'
+            }).then((result) => {
+            if (result.isConfirmed) {
+                eliminarTarea(tarea);
+            }
+        });
+    }
+    async function eliminarTarea(tarea){
+        const { id, nombre, estado } = tarea;
+
+        const datos = new FormData();
+        datos.append('id', id);
+        datos.append('nombre', nombre);
+        datos.append('estado', estado);
+        datos.append('proyectoId', obtenerProyecto());
+
+        try {
+            const url = 'http://localhost:3000/api/tarea/eliminar';
+            const respuesta = await fetch(url, {
+                method: 'POST',
+                body: datos
+            });
+
+            if (!respuesta.ok) {
+                throw new Error('Error en la respuesta del servidor');
+            }
+
+            const resultado = await respuesta.json();
+            
+            if(resultado.resultado){
+                Swal.fire('Eliminada!', resultado.mensaje, 'success');
+                tareas = tareas.filter(tareaActual => tareaActual.id !== tarea.id);
+                mostrarTareas();
+            } else {
+                Swal.fire('Error!', 'Hubo un error al eliminar la tarea', 'error');
+            }
+
+        } catch(error) {
+            console.error('Error al eliminar la tarea:', error);
+            Swal.fire('Error!', 'Hubo un error al eliminar la tarea', 'error');
+        }
     }
 
     function obtenerProyecto(){
