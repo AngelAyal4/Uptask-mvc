@@ -86,7 +86,7 @@ class Usuario extends ActiveRecord {
         return self::$alertas;
     }
 
-    public function validar_perfil() {
+    public function validarPerfil() {
         if(!$this->nombre) {
             self::$alertas['error'][] = 'El Nombre es Obligatorio';
         }
@@ -110,7 +110,7 @@ class Usuario extends ActiveRecord {
     }
 
     // Comprobar el password
-    public function comprobar_password() : bool {
+    public function comprobarPassword() : bool {
         return password_verify($this->password_actual, $this->password );
     }
 
